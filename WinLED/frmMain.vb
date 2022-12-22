@@ -9,6 +9,7 @@ Imports WinLED.Functions.HSL
 Imports WinLED.Functions.RGB
 Imports WinLED.HTTP_API
 Imports System.Net.Http
+Imports System.Text.RegularExpressions
 
 Public Class frmMain
     Dim presets As List(Of API.Presets)
@@ -29,13 +30,38 @@ Public Class frmMain
             cmbEffects.Items.AddRange(API.GetEffects().ToArray)
             cmbPalettes.Items.AddRange(API.GetPalettes().ToArray)
             presets = API.GetPresets
+            Dim parentMenuItem As New ToolStripMenuItem("Presets")
+            Dim counter As Integer = 0
             For Each effect In presets
                 lbPresets.Items.Add(effect.Name)
+                counter += 1
+                Dim menuItem As New ToolStripMenuItem(counter & "-" & effect.Name)
+                parentMenuItem.DropDownItems.Add(menuItem)
+                AddHandler menuItem.Click, AddressOf MenuItem_Click
             Next
+            ' Add the parent menu item (the drop-down menu) to the ContextMenuStrip
+            ContextMenuStrip1.Items.Add(parentMenuItem)
         End If
     End Sub
+    Private Sub MenuItem_Click(sender As Object, e As EventArgs)
+        Dim clickedItem As ToolStripMenuItem = CType(sender, ToolStripMenuItem)
+        ' Get the name of the clicked MenuItem
+        Dim name As String = clickedItem.Text
+        Dim id As Integer = GetNumberBeforeHyphen(name)
+        webCall.CallApi("PL=" & id)
+    End Sub
+    Public Function GetNumberBeforeHyphen(input As String) As Integer
+        Dim pattern As String = "^\d+-"
+        Dim match As Match = Regex.Match(input, pattern)
+        If match.Success Then
+            Dim number As String = match.Value.TrimEnd("-"c)
+            Return Int32.Parse(number)
+        Else
+            Return 0
+        End If
+    End Function
 
-    Private Async Function ColorWheel1_ColorChangedAsync(sender As Object, e As EventArgs) As Task Handles ColorWheel1.ColorChanged
+    Private Sub ColorWheel1_ColorChangedAsync(sender As Object, e As EventArgs) Handles ColorWheel1.ColorChanged
         If ColorWheel1.Color.R And ColorWheel1.Color.G And ColorWheel1.Color.B = 127 Then
             Dim tempColor As Color
             lblColorCodeRGB.Text = "RGB Code: 255-255-255"
@@ -51,7 +77,7 @@ Public Class frmMain
             Dim c As Color = tempColor
             webCall.CallApi("R=" + ColorWheel1.Color.R.ToString + "&G=" + ColorWheel1.Color.G.ToString + "&B=" + ColorWheel1.Color.B.ToString + "&W=" + ColorWheel1.Color.A.ToString + "&FX=0")
         End If
-    End Function
+    End Sub
 
     Private Sub tbBrightness_Scroll(sender As Object, e As EventArgs) Handles tbBrightness.Scroll
         lblBrightness.Text = "Brightness: " + tbBrightness.Value.ToString
@@ -114,6 +140,18 @@ Public Class frmMain
             Else
                 MsgBox("Ok :) ... you are still good to go.", vbInformation, "KEK")
             End If
+        End If
+    End Sub
+
+    Private Sub notifyBar_MouseDoubleClick(sender As Object, e As MouseEventArgs) Handles notifyBar.MouseDoubleClick
+        Me.Visible = True
+        Me.WindowState = FormWindowState.Normal
+    End Sub
+
+    Private Sub frmMain_Resize(sender As Object, e As EventArgs) Handles Me.Resize
+        If Me.WindowState = FormWindowState.Minimized Then
+            Me.ShowInTaskbar = True
+            Me.Visible = False
         End If
     End Sub
 End Class

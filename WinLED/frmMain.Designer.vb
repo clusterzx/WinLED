@@ -22,6 +22,8 @@ Partial Class frmMain
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()>
     Private Sub InitializeComponent()
+        Me.components = New System.ComponentModel.Container()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(frmMain))
         Me.GroupBox1 = New System.Windows.Forms.GroupBox()
         Me.lbPresets = New System.Windows.Forms.ListBox()
         Me.GroupBox2 = New System.Windows.Forms.GroupBox()
@@ -42,6 +44,8 @@ Partial Class frmMain
         Me.WLEDConfigToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.OptionsToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.ExitToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.notifyBar = New System.Windows.Forms.NotifyIcon(Me.components)
+        Me.ContextMenuStrip1 = New System.Windows.Forms.ContextMenuStrip(Me.components)
         Me.GroupBox1.SuspendLayout()
         Me.GroupBox2.SuspendLayout()
         CType(Me.tbBrightness, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -216,20 +220,35 @@ Partial Class frmMain
         'WLEDConfigToolStripMenuItem
         '
         Me.WLEDConfigToolStripMenuItem.Name = "WLEDConfigToolStripMenuItem"
-        Me.WLEDConfigToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.WLEDConfigToolStripMenuItem.Size = New System.Drawing.Size(160, 22)
         Me.WLEDConfigToolStripMenuItem.Text = "WLED Config"
         '
         'OptionsToolStripMenuItem
         '
         Me.OptionsToolStripMenuItem.Name = "OptionsToolStripMenuItem"
-        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.OptionsToolStripMenuItem.Size = New System.Drawing.Size(160, 22)
         Me.OptionsToolStripMenuItem.Text = "WinLED Options"
         '
         'ExitToolStripMenuItem
         '
         Me.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem"
-        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(180, 22)
+        Me.ExitToolStripMenuItem.Size = New System.Drawing.Size(160, 22)
         Me.ExitToolStripMenuItem.Text = "Exit"
+        '
+        'notifyBar
+        '
+        Me.notifyBar.BalloonTipIcon = System.Windows.Forms.ToolTipIcon.Info
+        Me.notifyBar.BalloonTipText = "...WinLED is not gone :)"
+        Me.notifyBar.BalloonTipTitle = "Hey..."
+        Me.notifyBar.ContextMenuStrip = Me.ContextMenuStrip1
+        Me.notifyBar.Icon = CType(resources.GetObject("notifyBar.Icon"), System.Drawing.Icon)
+        Me.notifyBar.Text = "WinLED Running"
+        Me.notifyBar.Visible = True
+        '
+        'ContextMenuStrip1
+        '
+        Me.ContextMenuStrip1.Name = "ContextMenuStrip1"
+        Me.ContextMenuStrip1.Size = New System.Drawing.Size(61, 4)
         '
         'frmMain
         '
@@ -282,4 +301,6 @@ Partial Class frmMain
     Friend WithEvents WLEDConfigToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents OptionsToolStripMenuItem As ToolStripMenuItem
     Friend WithEvents ExitToolStripMenuItem As ToolStripMenuItem
+    Friend WithEvents notifyBar As NotifyIcon
+    Friend WithEvents ContextMenuStrip1 As ContextMenuStrip
 End Class
